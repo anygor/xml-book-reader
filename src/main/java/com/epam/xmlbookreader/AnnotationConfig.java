@@ -1,7 +1,9 @@
 package com.epam.xmlbookreader;
 
+import com.epam.xmlbookreader.dao.BookGetter;
 import com.epam.xmlbookreader.dao.UrlXmlGetter;
-import com.epam.xmlbookreader.util.XMLHandler;
+import com.epam.xmlbookreader.util.BookRetrievingHandler;
+import com.epam.xmlbookreader.util.XMLCollectingHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +14,15 @@ public class AnnotationConfig {
         return new UrlXmlGetter();
     }
     @Bean
-    public XMLHandler xmlHandler() {
-        return new XMLHandler();
+    public XMLCollectingHandler xmlCollectingHandler() {
+        return new XMLCollectingHandler();
+    }
+    @Bean
+    public BookRetrievingHandler bookRetrievingHandler() {
+        return new BookRetrievingHandler();
+    }
+    @Bean
+    public BookGetter bookGetter() {
+        return new BookGetter();
     }
 }

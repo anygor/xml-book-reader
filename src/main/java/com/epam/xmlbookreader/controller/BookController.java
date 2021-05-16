@@ -1,8 +1,9 @@
 package com.epam.xmlbookreader.controller;
 
+import com.epam.xmlbookreader.dao.BookGetter;
 import com.epam.xmlbookreader.dao.UrlXmlGetter;
 import com.epam.xmlbookreader.model.Book;
-import com.epam.xmlbookreader.util.XMLHandler;
+import com.epam.xmlbookreader.util.XMLCollectingHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -26,20 +27,26 @@ public class BookController {
     private UrlXmlGetter urlXmlGetter;
 
     @Autowired
-    private XMLHandler xmlHandler;
+    private XMLCollectingHandler xmlCollectingHandler;
 
-    @RequestMapping(value = "/books", method = RequestMethod.GET, produces = "text/xml")
+    @Autowired
+    private BookGetter bookGetter;
+
+    @RequestMapping(value = "/books", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String books() {
+    public List<Book> books() {
         List<Book> books = new LinkedList<>();
         for (String url : bookUrls) {
-            Book book = new Book();
-            xmlHandler.setUrl(url);
-            xmlHandler.containsContentLink(urlXmlGetter.getXML(url));
-            String xml = xmlHandler.getXmlResult();
-            System.out.println(xml);
-            System.out.println("---------------------------------------------------------------------------------------");
+            xmlCollectingHandler.setXmlResult(new StringBuilder());
+            xmlCollectingHandler.setUrl(url);
+            String urlXml = urlXmlGetter.getXML(url);
+            xmlCollectingHandler.appendContentLinkToResultIfExists(urlXml);
+            String fullXml = "<root>" + xmlCollectingHandler.getXmlResult() + "</root>";
+            Book book = bookGetter.getBookFromXml(fullXml);
+            book.setTitle(url.substring(url.indexOf("/books/")));
+            book.setId(book.getTitle().hashCode());
+            books.add(book);
         }
-        return xmlBooks.get(0);
+        return books;
     }
 }
