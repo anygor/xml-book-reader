@@ -13,7 +13,6 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedList;
-import java.util.List;
 
 public class BookRetrievingHandler extends DefaultHandler {
 
@@ -23,14 +22,12 @@ public class BookRetrievingHandler extends DefaultHandler {
     private boolean inTitle = false;
     private boolean inBody = false;
 
-    private List<Section> sections;
     private Section section;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equals("root")) {
-            sections = new LinkedList<>();
-            book.setSections(sections);
+            book.setSections(new LinkedList<>());
         }
         if (qName.equals("section")) {
             section = new Section();
@@ -50,7 +47,7 @@ public class BookRetrievingHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("section")) {
             inSection = false;
-            sections.add(section);
+            book.getSections().add(section);
         }
         if (inSection) {
             if (qName.equals("title")) {
@@ -59,9 +56,6 @@ public class BookRetrievingHandler extends DefaultHandler {
             else if (qName.equals("body")) {
                 inBody = false;
             }
-        }
-        if (qName.equals("root")) {
-            book.setSections(sections);
         }
     }
 
@@ -79,7 +73,7 @@ public class BookRetrievingHandler extends DefaultHandler {
     }
 
     public Book getBookFromXml(String xml) {
-        Book book;
+        Book book = null;
         try {
             book = new Book();
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -88,7 +82,6 @@ public class BookRetrievingHandler extends DefaultHandler {
             parser.parse(new InputSource(new StringReader(xml)), this);
 
         } catch (IOException | ParserConfigurationException | SAXException e) {
-            book = null;
             e.printStackTrace();
         }
         return book;
