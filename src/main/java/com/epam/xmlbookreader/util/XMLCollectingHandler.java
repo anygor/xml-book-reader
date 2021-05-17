@@ -19,12 +19,11 @@ public class XMLCollectingHandler extends DefaultHandler {
 
     private String url;
 
-    private StringBuilder xmlResult = new StringBuilder();
+    private StringBuilder xmlResult;
 
-    public void appendContentLinkToResultIfExists(String xml) {
+    public String getContentLinkToResultIfExists(String xml) {
         try {
-            xml = xml.substring(xml.indexOf(">") + 1);
-            xmlResult.append(xml);
+            xmlResult.append(xml.substring(xml.indexOf(">") + 1));
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
             parser.parse(new InputSource(new StringReader(xml)), this);
@@ -33,35 +32,22 @@ public class XMLCollectingHandler extends DefaultHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return xml;
+    }
+
+    public String getFullXml(String url) {
+        this.url = url;
+        xmlResult = new StringBuilder();
+        String urlXml = urlXmlGetter.getXML(url);
+        getContentLinkToResultIfExists(urlXml);
+        return xmlResult.toString();
     }
 
     @Override
     public void processingInstruction(String target, String data) {
         if (target.equals("content-link")) {
             String xml = urlXmlGetter.getXML(url, data.substring(data.indexOf("\"")).replaceAll("\"", ""));
-            appendContentLinkToResultIfExists(xml);
+            getContentLinkToResultIfExists(xml);
         }
-    }
-
-    @Override
-    public void startDocument() throws SAXException {
-        xmlResult.append("\n");
-        super.startDocument();
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getXmlResult() {
-        return xmlResult.toString();
-    }
-
-    public void setXmlResult(StringBuilder xmlResult) {
-        this.xmlResult = xmlResult;
     }
 }
