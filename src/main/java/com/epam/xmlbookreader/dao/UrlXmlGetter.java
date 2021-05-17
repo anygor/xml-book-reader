@@ -31,8 +31,6 @@ public class UrlXmlGetter implements XMLGetter {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
         }
         return content.toString();
     }

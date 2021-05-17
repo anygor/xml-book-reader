@@ -17,9 +17,8 @@ public class BookGetter {
     @Autowired
     private BookRetrievingHandler bookRetrievingHandler;
 
-    private Book book;
-
     public Book getBookFromXml(String xml) {
+        Book book;
         try {
             book = new Book();
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -28,6 +27,7 @@ public class BookGetter {
             parser.parse(new InputSource(new StringReader(xml)), bookRetrievingHandler);
 
         } catch (IOException | ParserConfigurationException | SAXException e) {
+            book = null;
             e.printStackTrace();
         }
         return book;
