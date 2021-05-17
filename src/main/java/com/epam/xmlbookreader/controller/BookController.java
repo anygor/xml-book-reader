@@ -32,6 +32,9 @@ public class BookController {
     @Autowired
     private BookGetter bookGetter;
 
+    private String rootTag = "root";
+    private int bookPathMargin = 7;
+
     @RequestMapping(value = "/books", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public List<Book> books() {
@@ -41,9 +44,9 @@ public class BookController {
             xmlCollectingHandler.setUrl(url);
             String urlXml = urlXmlGetter.getXML(url);
             xmlCollectingHandler.appendContentLinkToResultIfExists(urlXml);
-            String fullXml = "<root>" + xmlCollectingHandler.getXmlResult() + "</root>";
+            String fullXml = "<" + rootTag + ">" + xmlCollectingHandler.getXmlResult() + "</" + rootTag + ">";
             Book book = bookGetter.getBookFromXml(fullXml);
-            book.setTitle(url.substring(url.indexOf("/books/")));
+            book.setTitle(url.substring(url.indexOf("/books/") + bookPathMargin));
             book.setId(book.getTitle().hashCode());
             books.add(book);
         }

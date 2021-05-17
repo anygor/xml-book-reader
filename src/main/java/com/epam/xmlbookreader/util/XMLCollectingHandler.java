@@ -17,9 +17,6 @@ public class XMLCollectingHandler extends DefaultHandler {
     @Autowired
     private UrlXmlGetter urlXmlGetter;
 
-    @Autowired
-    private XMLCollectingHandler handler;
-
     private String url;
 
     private StringBuilder xmlResult = new StringBuilder();
@@ -30,7 +27,7 @@ public class XMLCollectingHandler extends DefaultHandler {
             xmlResult.append(xml);
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
-            parser.parse(new InputSource(new StringReader(xml)), handler);
+            parser.parse(new InputSource(new StringReader(xml)), this);
         } catch (SAXException | ParserConfigurationException e) {
             e.printStackTrace();
         } catch (IOException e) {
