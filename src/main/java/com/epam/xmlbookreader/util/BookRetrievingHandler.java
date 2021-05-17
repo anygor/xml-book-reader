@@ -2,6 +2,8 @@ package com.epam.xmlbookreader.util;
 
 import com.epam.xmlbookreader.model.Book;
 import com.epam.xmlbookreader.model.Section;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -15,6 +17,8 @@ import java.io.StringReader;
 import java.util.LinkedList;
 
 public class BookRetrievingHandler extends DefaultHandler {
+
+    private final Logger logger = LogManager.getLogger(BookRetrievingHandler.class);
 
     private Book book;
 
@@ -82,7 +86,7 @@ public class BookRetrievingHandler extends DefaultHandler {
             parser.parse(new InputSource(new StringReader(xml)), this);
 
         } catch (IOException | ParserConfigurationException | SAXException e) {
-            e.printStackTrace();
+            logger.error(e.getClass().toString() + " at getBookFromXml:" + e.getMessage());
         }
         return book;
     }

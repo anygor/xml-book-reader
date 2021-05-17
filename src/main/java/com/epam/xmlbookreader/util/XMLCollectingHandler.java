@@ -1,6 +1,8 @@
 package com.epam.xmlbookreader.util;
 
 import com.epam.xmlbookreader.dao.UrlXmlGetter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -13,6 +15,8 @@ import java.io.IOException;
 import java.io.StringReader;
 
 public class XMLCollectingHandler extends DefaultHandler {
+
+    private final Logger logger = LogManager.getLogger(XMLCollectingHandler.class);
 
     @Autowired
     private UrlXmlGetter urlXmlGetter;
@@ -28,9 +32,9 @@ public class XMLCollectingHandler extends DefaultHandler {
             SAXParser parser = factory.newSAXParser();
             parser.parse(new InputSource(new StringReader(xml)), this);
         } catch (SAXException | ParserConfigurationException e) {
-            e.printStackTrace();
+            logger.error(e.getClass().toString() + " at getContentLinkToResultIfExists:" + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("IO exception at getContentLinkToResultIfExists:" + e.getMessage());
         }
         return xml;
     }
