@@ -6,7 +6,7 @@ Download the **xml-reader-app.jar** file and move it to any place that suits for
 
 _Optional_ In the same folder create a file **application.properties** and put links to the books you want to parse, for example:
 
-_book.url=http://ec2-52-91-150-126.compute-1.amazonaws.com/content/books/far-far-away/,http://ec2-52-91-150-126.compute-1.amazonaws.com/content/books/european-languages/_, 
+_book.url=http://ec2-52-91-150-126.compute-1.amazonaws.com/content/books/far-far-away/,http://ec2-52-91-150-126.compute-1.amazonaws.com/content/books/european-languages/_ 
 
 For multiple links use comma without spaces.
 

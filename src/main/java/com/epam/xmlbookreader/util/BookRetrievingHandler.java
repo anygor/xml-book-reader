@@ -3,9 +3,15 @@ package com.epam.xmlbookreader.util;
 import com.epam.xmlbookreader.model.Book;
 import com.epam.xmlbookreader.model.Section;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,11 +78,19 @@ public class BookRetrievingHandler extends DefaultHandler {
         }
     }
 
-    public Book getBook() {
-        return book;
-    }
+    public Book getBookFromXml(String xml) {
+        Book book;
+        try {
+            book = new Book();
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser parser = factory.newSAXParser();
+            this.book = book;
+            parser.parse(new InputSource(new StringReader(xml)), this);
 
-    public void setBook(Book book) {
-        this.book = book;
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            book = null;
+            e.printStackTrace();
+        }
+        return book;
     }
 }

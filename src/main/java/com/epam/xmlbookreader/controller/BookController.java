@@ -1,8 +1,8 @@
 package com.epam.xmlbookreader.controller;
 
-import com.epam.xmlbookreader.dao.BookGetter;
 import com.epam.xmlbookreader.dao.UrlXmlGetter;
 import com.epam.xmlbookreader.model.Book;
+import com.epam.xmlbookreader.util.BookRetrievingHandler;
 import com.epam.xmlbookreader.util.XMLCollectingHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +30,7 @@ public class BookController {
     private XMLCollectingHandler xmlCollectingHandler;
 
     @Autowired
-    private BookGetter bookGetter;
+    private BookRetrievingHandler bookRetrievingHandler;
 
     private String rootTag = "root";
     private int bookPathMargin = 7;
@@ -45,7 +45,7 @@ public class BookController {
             String urlXml = urlXmlGetter.getXML(url);
             xmlCollectingHandler.appendContentLinkToResultIfExists(urlXml);
             String fullXml = "<" + rootTag + ">" + xmlCollectingHandler.getXmlResult() + "</" + rootTag + ">";
-            Book book = bookGetter.getBookFromXml(fullXml);
+            Book book = bookRetrievingHandler.getBookFromXml(fullXml);
             book.setTitle(url.substring(url.indexOf("/books/") + bookPathMargin));
             book.setId(book.getTitle().hashCode());
             books.add(book);

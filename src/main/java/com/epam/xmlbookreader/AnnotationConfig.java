@@ -1,6 +1,5 @@
 package com.epam.xmlbookreader;
 
-import com.epam.xmlbookreader.dao.BookGetter;
 import com.epam.xmlbookreader.dao.UrlXmlGetter;
 import com.epam.xmlbookreader.util.BookRetrievingHandler;
 import com.epam.xmlbookreader.util.XMLCollectingHandler;
@@ -20,9 +19,5 @@ public class AnnotationConfig {
     @Bean
     public BookRetrievingHandler bookRetrievingHandler() {
         return new BookRetrievingHandler();
-    }
-    @Bean
-    public BookGetter bookGetter() {
-        return new BookGetter();
     }
 }
