@@ -1,5 +1,6 @@
 package com.epam.xmlbookreader;
 
+import com.epam.xmlbookreader.dao.UrlXmlGetter;
 import com.epam.xmlbookreader.model.Book;
 import com.epam.xmlbookreader.util.BookRetrievingHandler;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,9 @@ class BookRetrievingParserTests {
 
 	@Autowired
 	private BookRetrievingHandler bookRetrievingHandler;
+
+	@Autowired
+	private UrlXmlGetter urlXmlGetter;
 
 	@Test
 	void contextLoads(){}
@@ -58,6 +62,14 @@ class BookRetrievingParserTests {
 						("And if she hasn’t been rewritten, then they are still using her. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One");
 		assertThat(firstSectionsAreEqual && secondSectionsAreEqual && thirdSectionsAreEqual &&
 				fourthSectionsAreEqual && fifthSectionsAreEqual && sixthSectionsAreEqual).isTrue();
+	}
+
+	@Test
+	void testGetBookFromStream() {
+		String url = "http://ec2-52-91-150-126.compute-1.amazonaws.com/content/books/far-far-away/";
+		bookRetrievingHandler.setUrl(url);
+		Book book = bookRetrievingHandler.getBookFromXmlInputStream(urlXmlGetter.getXmlInputStream(url, "section-1.xml"));
+		System.out.println("стоять милиция");
 	}
 
 }

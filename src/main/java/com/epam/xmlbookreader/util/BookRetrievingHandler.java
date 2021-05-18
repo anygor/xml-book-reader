@@ -1,9 +1,11 @@
 package com.epam.xmlbookreader.util;
 
+import com.epam.xmlbookreader.dao.UrlXmlGetter;
 import com.epam.xmlbookreader.model.Book;
 import com.epam.xmlbookreader.model.Section;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -13,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.LinkedList;
 
@@ -28,8 +31,14 @@ public class BookRetrievingHandler extends DefaultHandler {
 
     private Section section;
 
+    private String url;
+
+    @Autowired
+    private UrlXmlGetter urlXmlGetter;
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        if (book == null) book = new Book();
         if (qName.equals("root")) {
             book.setSections(new LinkedList<>());
         }
@@ -51,6 +60,7 @@ public class BookRetrievingHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equals("section")) {
             inSection = false;
+            if (book.getSections() == null) { book.setSections(new LinkedList<>()); }
             book.getSections().add(section);
         }
         if (inSection) {
@@ -60,6 +70,13 @@ public class BookRetrievingHandler extends DefaultHandler {
             else if (qName.equals("body")) {
                 inBody = false;
             }
+        }
+    }
+
+    @Override
+    public void processingInstruction(String target, String data) {
+        if (target.equals("content-link")) {
+            this.getBookFromXmlInputStream(urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", "")));
         }
     }
 
@@ -79,7 +96,6 @@ public class BookRetrievingHandler extends DefaultHandler {
     public Book getBookFromXml(String xml) {
         Book book = null;
         try {
-            book = new Book();
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
             this.book = book;
@@ -89,5 +105,25 @@ public class BookRetrievingHandler extends DefaultHandler {
             logger.error(e.getClass().toString() + " at getBookFromXml:" + e.getMessage());
         }
         return book;
+    }
+
+    public Book getBookFromXmlInputStream(InputStream inputStream) {
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser parser = factory.newSAXParser();
+            parser.parse(inputStream, this);
+
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            logger.error(e.getClass().toString() + " at getBookFromXml:" + e.getMessage());
+        }
+        return book;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
