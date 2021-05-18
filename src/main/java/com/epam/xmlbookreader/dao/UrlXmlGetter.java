@@ -80,4 +80,8 @@ public class UrlXmlGetter implements XMLGetter {
         } // TODO finally close disconnect abort die suicide
         return null;
     }
+
+    public InputStream getXmlInputStream(String urlParam) {
+        return getXmlInputStream(urlParam, "section-1.xml");
+    }
 }

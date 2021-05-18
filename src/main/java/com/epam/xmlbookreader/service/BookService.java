@@ -29,4 +29,14 @@ public class BookService {
 		book.setId(book.getTitle().hashCode());
 		return book;
 	}
+
+	public Book getBookWithStream(String url) {
+		bookRetrievingHandler.setBook(new Book());
+		bookRetrievingHandler.setUrl(url);
+		Book book = bookRetrievingHandler.getBookFromXmlInputStream(urlXmlGetter.getXmlInputStream(url));
+		book.setTitle(url.substring(url.indexOf("/books/") + bookPathMargin));
+		book.setId(book.getTitle().hashCode());
+		return book;
+	}
 }
+

@@ -126,4 +126,12 @@ public class BookRetrievingHandler extends DefaultHandler {
     public void setUrl(String url) {
         this.url = url;
     }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
 }

@@ -30,7 +30,7 @@ public class BookController {
     public List<Book> books() {
         List<Book> books = new LinkedList<>();
         for (String url : bookUrls) {
-            books.add(bookService.getBook(url));
+            books.add(bookService.getBookWithStream(url));
         }
         return books;
     }
