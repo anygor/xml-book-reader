@@ -36,12 +36,14 @@ public class BookRetrievingHandler extends DefaultHandler {
     @Autowired
     private UrlXmlGetter urlXmlGetter;
 
+    public Book getBookFromInputStream(String url, InputStream inputStream) {
+        this.url = url;
+        this.book = new Book();
+        return getSectionFromXmlInputStream(inputStream);
+    }
+
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        if (book == null) book = new Book();
-        if (qName.equals("root")) {
-            book.setSections(new LinkedList<>());
-        }
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (qName.equals("section")) {
             section = new Section();
             inSection = true;
@@ -57,7 +59,7 @@ public class BookRetrievingHandler extends DefaultHandler {
     }
 
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(String uri, String localName, String qName)  {
         if (qName.equals("section")) {
             inSection = false;
             if (book.getSections() == null) { book.setSections(new LinkedList<>()); }
@@ -76,12 +78,12 @@ public class BookRetrievingHandler extends DefaultHandler {
     @Override
     public void processingInstruction(String target, String data) {
         if (target.equals("content-link")) {
-            this.getBookFromXmlInputStream(urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", "")));
+            this.getSectionFromXmlInputStream(urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", "")));
         }
     }
 
     @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
+    public void characters(char[] ch, int start, int length) {
         if (inSection) {
             if (inTitle) {
                 section.setTitle(new String(ch, start, length));
@@ -107,7 +109,7 @@ public class BookRetrievingHandler extends DefaultHandler {
         return book;
     }
 
-    public Book getBookFromXmlInputStream(InputStream inputStream) {
+    public Book getSectionFromXmlInputStream(InputStream inputStream) {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
@@ -117,21 +119,5 @@ public class BookRetrievingHandler extends DefaultHandler {
             logger.error(e.getClass().toString() + " at getBookFromXml:" + e.getMessage());
         }
         return book;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
     }
 }

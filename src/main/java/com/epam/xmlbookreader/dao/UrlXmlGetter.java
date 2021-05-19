@@ -62,7 +62,6 @@ public class UrlXmlGetter implements XMLGetter {
 
     public InputStream getXmlInputStream(String urlParam, String section) {
         HttpURLConnection connection = null;
-        BufferedReader in = null;
         try {
             URL url = new URL(urlParam + section);
             connection = (HttpURLConnection) url.openConnection();
@@ -77,10 +76,11 @@ public class UrlXmlGetter implements XMLGetter {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } // TODO finally close disconnect abort die suicide
+        }
         return null;
     }
 
+    @Override
     public InputStream getXmlInputStream(String urlParam) {
         return getXmlInputStream(urlParam, "section-1.xml");
     }
