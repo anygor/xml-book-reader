@@ -27,12 +27,11 @@ public class BookService {
 	private int bookPathMargin = 7;
 
 	public Book getBookWithStream(String url) {
-		InputStream inputStream = urlXmlGetter.getXmlInputStream(url);
-		Book book = bookRetrievingHandler.getBookFromInputStream(url, inputStream);
+		Book book = null;
+		try (InputStream inputStream = urlXmlGetter.getXmlInputStream(url)) {
+		book = bookRetrievingHandler.getBookFromInputStream(url, inputStream);
 		book.setTitle(url.substring(url.indexOf("/books/") + bookPathMargin));
 		book.setId(book.getTitle().hashCode());
-		try {
-			inputStream.close();
 		} catch (IOException e) {
 			logger.error("IO Exception at getBookWithStream: " + e.getMessage());
 		}

@@ -78,12 +78,8 @@ public class BookRetrievingHandler extends DefaultHandler {
     @Override
     public void processingInstruction(String target, String data) {
         if (target.equals("content-link")) {
-            InputStream stream = urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", ""));
-            this.getBookWithSectionsFromXmlInputStream(stream);
-            try {
-                if (stream != null) {
-                    stream.close();
-                }
+            try (InputStream stream = urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", ""));){
+                this.getBookWithSectionsFromXmlInputStream(stream);
             } catch (IOException e) {
                 logger.error(e.getClass().toString() + " at processingInstruction: " + e.getMessage());
             }
