@@ -16,7 +16,7 @@ public class BookServiceIntegrationTests {
 	@Test
 	void getBookTest() {
 		String url = "http://ec2-52-91-150-126.compute-1.amazonaws.com/content/books/far-far-away/";
-		Book book = bookService.getBook(url);
+		Book book = bookService.getBookWithStream(url);
 		boolean titleIsCorrect = book.getTitle().equals("far-far-away/");
 		boolean firstSectionIsCorrect = book.getSections().get(0).getTitle().equals("Introduction") &&
 				book.getSections().get(0).getBody().equals("Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia.");

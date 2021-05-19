@@ -39,7 +39,7 @@ public class BookRetrievingHandler extends DefaultHandler {
     public Book getBookFromInputStream(String url, InputStream inputStream) {
         this.url = url;
         this.book = new Book();
-        return getSectionFromXmlInputStream(inputStream);
+        return getBookWithSectionsFromXmlInputStream(inputStream);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class BookRetrievingHandler extends DefaultHandler {
     @Override
     public void processingInstruction(String target, String data) {
         if (target.equals("content-link")) {
-            this.getSectionFromXmlInputStream(urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", "")));
+            this.getBookWithSectionsFromXmlInputStream(urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", "")));
         }
     }
 
@@ -109,7 +109,7 @@ public class BookRetrievingHandler extends DefaultHandler {
         return book;
     }
 
-    public Book getSectionFromXmlInputStream(InputStream inputStream) {
+    public Book getBookWithSectionsFromXmlInputStream(InputStream inputStream) {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();

@@ -1,35 +1,31 @@
 package com.epam.xmlbookreader;
 
+import com.epam.xmlbookreader.dao.UrlXmlGetter;
 import com.epam.xmlbookreader.model.Book;
-import com.epam.xmlbookreader.model.Section;
 import com.epam.xmlbookreader.util.BookRetrievingHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class BookRetrievingParserTests {
+public class BookRetrievingIntegrationTests {
 
 	@Autowired
 	private BookRetrievingHandler bookRetrievingHandler;
 
-	@Test
-	void contextLoads(){}
+	@Autowired
+	private UrlXmlGetter urlXmlGetter;
 
 	@Test
-	void testGetBookFromXml() {
-		String xml = "<content><section><title>The European Languages</title><body>The European languages are members of the same family. Their separate existence is a myth. For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ in their grammar, their pronunciation and their most common words. Everyone realizes why a new common language would be desirable: one could refuse to pay expensive translators.</body></section><?content-link file=\"section-2.xml\"?></content>";
+	void testGetBookFromStream() {
 		String url = "http://ec2-52-91-150-126.compute-1.amazonaws.com/content/books/far-far-away/";
-		Book actual = bookRetrievingHandler.getBookFromInputStream(url, new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+		Book actual = bookRetrievingHandler.getBookFromInputStream(url, urlXmlGetter.getXmlInputStream(url, "section-1.xml"));
 		boolean firstSectionsAreEqual = actual.getSections().get(0).getTitle().equals
-				("The European Languages") &&
+				("Introduction") &&
 				actual.getSections().get(0).getBody().equals
-						("The European languages are members of the same family. Their separate existence is a myth. For science, music, sport, etc, Europe uses the same vocabulary. The languages only differ in their grammar, their pronunciation and their most common words. Everyone realizes why a new common language would be desirable: one could refuse to pay expensive translators.");
+						("Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia.");
 		boolean secondSectionsAreEqual = actual.getSections().get(1).getTitle().equals
 				("World of Grammar") &&
 				actual.getSections().get(1).getBody().equals
@@ -50,8 +46,13 @@ class BookRetrievingParserTests {
 				("Far Away") &&
 				actual.getSections().get(5).getBody().equals
 						("And if she hasn’t been rewritten, then they are still using her. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One");
-		assertThat(firstSectionsAreEqual && secondSectionsAreEqual && thirdSectionsAreEqual &&
-				fourthSectionsAreEqual && fifthSectionsAreEqual && sixthSectionsAreEqual).isTrue();
+		assertThat(firstSectionsAreEqual &&
+				secondSectionsAreEqual &&
+				thirdSectionsAreEqual &&
+				fourthSectionsAreEqual &&
+				fifthSectionsAreEqual &&
+				sixthSectionsAreEqual &&
+				actual.getSections().size() == 6).isTrue();
 	}
 
 }
