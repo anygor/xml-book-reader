@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -16,7 +15,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.LinkedList;
 
 public class BookRetrievingHandler extends DefaultHandler {
@@ -78,11 +76,11 @@ public class BookRetrievingHandler extends DefaultHandler {
     @Override
     public void processingInstruction(String target, String data) {
         if (target.equals("content-link")) {
-            try (InputStream stream = urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", ""));){
+            String sectionPath = data.substring(data.indexOf("\"")).replaceAll("\"", "");
+            urlXmlGetter.getXmlInputStream(url, sectionPath, (stream) -> {
                 this.getBookWithSectionsFromXmlInputStream(stream);
-            } catch (IOException e) {
-                logger.error(e.getClass().toString() + " at processingInstruction: " + e.getMessage());
-            }
+                return true;
+            });
         }
     }
 

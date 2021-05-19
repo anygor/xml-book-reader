@@ -1,7 +1,8 @@
 package com.epam.xmlbookreader.dao;
 
 import java.io.InputStream;
+import java.util.function.Function;
 
 public interface XMLGetter {
-    InputStream getXmlInputStream(String url);
+    <T> T getXmlInputStream(String url, Function<InputStream, T> consumer);
 }

@@ -1,6 +1,5 @@
 package com.epam.xmlbookreader.service;
 
-import com.epam.xmlbookreader.dao.UrlXmlGetter;
 import com.epam.xmlbookreader.dao.XMLGetter;
 import com.epam.xmlbookreader.model.Book;
 import com.epam.xmlbookreader.util.BookRetrievingHandler;
@@ -9,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Function;
 
 @Component
 public class BookService {
@@ -27,15 +26,15 @@ public class BookService {
 	private int bookPathMargin = 7;
 
 	public Book getBookWithStream(String url) {
-		Book book = null;
-		try (InputStream inputStream = urlXmlGetter.getXmlInputStream(url)) {
-		book = bookRetrievingHandler.getBookFromInputStream(url, inputStream);
-		book.setTitle(url.substring(url.indexOf("/books/") + bookPathMargin));
-		book.setId(book.getTitle().hashCode());
-		} catch (IOException e) {
-			logger.error("IO Exception at getBookWithStream: " + e.getMessage());
-		}
-		return book;
+		return urlXmlGetter.getXmlInputStream(url, new Function<InputStream, Book>() {
+			@Override
+			public Book apply(InputStream inputStream) {
+				Book book = bookRetrievingHandler.getBookFromInputStream(url, inputStream);
+				book.setTitle(url.substring(url.indexOf("/books/") + bookPathMargin));
+				book.setId(book.getTitle().hashCode());
+				return book;
+			}
+		});
 	}
 }
 

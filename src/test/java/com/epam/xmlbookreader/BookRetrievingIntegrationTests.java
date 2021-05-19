@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,8 +25,15 @@ public class BookRetrievingIntegrationTests {
 	@Test
 	void testGetBookFromStream() throws IOException {
 		String url = "http://ec2-52-91-150-126.compute-1.amazonaws.com/content/books/far-far-away/";
-		InputStream stream = urlXmlGetter.getXmlInputStream(url, "section-1.xml");
-		Book actual = bookRetrievingHandler.getBookFromInputStream(url, stream);
+		Book actual = urlXmlGetter.getXmlInputStream(url, "section-1.xml", new Function<InputStream, Book>() {
+			@Override
+			public Book apply(InputStream inputStream) {
+				Book book = bookRetrievingHandler.getBookFromInputStream(url, inputStream);
+				book.setTitle(url.substring(url.indexOf("/books/") + 7));
+				book.setId(book.getTitle().hashCode());
+				return book;
+			}
+		});
 		boolean firstSectionsAreEqual = actual.getSections().get(0).getTitle().equals
 				("Introduction") &&
 				actual.getSections().get(0).getBody().equals
@@ -50,7 +58,6 @@ public class BookRetrievingIntegrationTests {
 				("Far Away") &&
 				actual.getSections().get(5).getBody().equals
 						("And if she hasn’t been rewritten, then they are still using her. Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts. Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth. Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One");
-		stream.close();
 		assertThat(firstSectionsAreEqual &&
 				secondSectionsAreEqual &&
 				thirdSectionsAreEqual &&
