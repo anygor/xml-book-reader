@@ -78,7 +78,15 @@ public class BookRetrievingHandler extends DefaultHandler {
     @Override
     public void processingInstruction(String target, String data) {
         if (target.equals("content-link")) {
-            this.getBookWithSectionsFromXmlInputStream(urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", "")));
+            InputStream stream = urlXmlGetter.getXmlInputStream(url, data.substring(data.indexOf("\"")).replaceAll("\"", ""));
+            this.getBookWithSectionsFromXmlInputStream(stream);
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getClass().toString() + " at processingInstruction: " + e.getMessage());
+            }
         }
     }
 
@@ -95,20 +103,6 @@ public class BookRetrievingHandler extends DefaultHandler {
         }
     }
 
-    public Book getBookFromXml(String xml) {
-        Book book = null;
-        try {
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser parser = factory.newSAXParser();
-            this.book = book;
-            parser.parse(new InputSource(new StringReader(xml)), this);
-
-        } catch (IOException | ParserConfigurationException | SAXException e) {
-            logger.error(e.getClass().toString() + " at getBookFromXml:" + e.getMessage());
-        }
-        return book;
-    }
-
     public Book getBookWithSectionsFromXmlInputStream(InputStream inputStream) {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -116,7 +110,7 @@ public class BookRetrievingHandler extends DefaultHandler {
             parser.parse(inputStream, this);
 
         } catch (IOException | ParserConfigurationException | SAXException e) {
-            logger.error(e.getClass().toString() + " at getBookFromXml:" + e.getMessage());
+            logger.error(e.getClass().toString() + " at getBookFromXml: " + e.getMessage());
         }
         return book;
     }

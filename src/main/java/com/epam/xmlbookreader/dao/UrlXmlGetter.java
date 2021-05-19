@@ -15,7 +15,7 @@ public class UrlXmlGetter implements XMLGetter {
     private final Logger logger = LogManager.getLogger(UrlXmlGetter.class);
 
     public InputStream getXmlInputStream(String urlParam, String section) {
-        HttpURLConnection connection = null;
+        HttpURLConnection connection;
         try {
             URL url = new URL(urlParam + section);
             connection = (HttpURLConnection) url.openConnection();
@@ -25,11 +25,11 @@ public class UrlXmlGetter implements XMLGetter {
             connection.setReadTimeout(5000);
             return connection.getInputStream();
         } catch (ProtocolException e) {
-            e.printStackTrace();
+            logger.error(e.getClass().toString() + " at " + "getInputStream: " + e.getMessage());
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.error(e.getClass().toString() + " at " + "getInputStream: " + e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getClass().toString() + " at " + "getInputStream: " + e.getMessage());
         }
         return null;
     }

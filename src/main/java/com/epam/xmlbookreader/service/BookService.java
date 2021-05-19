@@ -18,7 +18,7 @@ public class BookService {
 	private final Logger logger = LogManager.getLogger(BookService.class);
 
 	@Autowired
-	private UrlXmlGetter urlXmlGetter;
+	private XMLGetter urlXmlGetter;
 
 	@Autowired
 	private BookRetrievingHandler bookRetrievingHandler;

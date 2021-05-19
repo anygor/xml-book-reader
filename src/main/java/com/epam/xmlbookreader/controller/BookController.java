@@ -21,7 +21,6 @@ public class BookController {
 
     private ArrayList<String> xmlBooks = new ArrayList<>();
 
-
     @Autowired
     private BookService bookService;
 
